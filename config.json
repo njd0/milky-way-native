@@ -1,0 +1,11 @@
+{
+    "env": "dev",
+    "services": {
+        "milkyWay": {
+            "baseUrl": "http://localhost:8080",
+            "getPosts": "/v1/posts",
+            "getComments": "/v1/comments",
+            "postLike": "/v1/like"
+        }
+    }
+}

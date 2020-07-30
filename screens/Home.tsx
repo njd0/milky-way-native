@@ -6,9 +6,7 @@ import { Text, View } from '../components/Themed';
 import { Post } from '../types';
 import { connect } from 'react-redux';
 
-// Imports: Redux Actions
-import { login } from '../redux/actions/authActions';
-import { likePost, dislikePost, fetchPosts } from '../redux/actions/homeActions';
+import { login, likePost, dislikePost, fetchPosts } from "../redux/actions";
 
 type State = Readonly<typeof initialState>
 type Props = StoreProps;
@@ -31,26 +29,27 @@ class Home extends Component<Props, State> {
 
   componentDidMount() {
     // GET list here
+    this.props.reduxFetchPosts();
     // this.findCoordinates();
-    setTimeout(() => {
-      this.setState({
-        rows: [{
-            id: '0',
-            username: 'noah davidson',
-            imageSrc: 'https://via.placeholder.com/256x144',
-            liked: true,
-          },
-          {
-            id: '1',
-            username: 'chococowmilk',
-            imageSrc: 'https://via.placeholder.com/256x144',
-            liked: false,
-          }]
-      });
+    // setTimeout(() => {
+    //   this.setState({
+    //     rows: [{
+    //         id: '0',
+    //         username: 'noah davidson',
+    //         imageSrc: 'https://via.placeholder.com/256x144',
+    //         liked: true,
+    //       },
+    //       {
+    //         id: '1',
+    //         username: 'chococowmilk',
+    //         imageSrc: 'https://via.placeholder.com/256x144',
+    //         liked: false,
+    //       }]
+    //   });
 
-      this.props.reduxFetchPosts();
-      console.log('POST PROPS', this.props.posts)
-    }, 2000)
+    //   this.props.reduxFetchPosts();
+    //   // console.log('POST PROPS', this.props.posts)
+    // }, 2000)
   }
 
   // findCoordinates = () => {
@@ -97,7 +96,7 @@ class Home extends Component<Props, State> {
         </View>
       <FlatList
         style={styles.container}
-        data={this.state.rows}
+        data={this.props.posts}
         renderItem={this.renderPost}
       />
       </>

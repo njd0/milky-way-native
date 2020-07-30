@@ -1,3 +1,5 @@
+// todo export 
+
 export type RootStackParamList = {
   Root: undefined;
   NotFound: undefined;
@@ -22,3 +24,5 @@ export type Post = {
   imageSrc: string,
   liked: boolean,
 };
+
+export type Reducers = 'home' | 'auth';

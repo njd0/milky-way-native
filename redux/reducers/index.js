@@ -14,7 +14,7 @@ function createFilteredReducer(reducerFunction, reducerPredicate) {
 // Redux: Root Reducer
 const rootReducer = combineReducers({
   authReducer: authReducer,
-  homeReducer: createFilteredReducer(homeReducer, action => action.name === 'HOME'),
+  homeReducer: createFilteredReducer(homeReducer, action => action.name === 'HOME'), // TODO create types for reducers
 });
 
 export default rootReducer;
