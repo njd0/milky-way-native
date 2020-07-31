@@ -1,25 +1,19 @@
 import React, {Component} from 'react';
 import { StyleSheet, Dimensions, Image, TouchableOpacity, Button } from 'react-native';
-import { FlatList, Alert } from 'react-native';
+import { FlatList, ActivityIndicator, Alert } from 'react-native';
 import UserPost from '../components/UserPost';
 import { Text, View } from '../components/Themed';
 import { Post } from '../types';
 import { connect } from 'react-redux';
-
-import { login, likePost, dislikePost, fetchPosts } from "../redux/actions";
+import {homeActions} from "../data/actions";
 
 type State = Readonly<typeof initialState>
 type Props = StoreProps;
 // type Props = OwnProps & InjectedProps & StoreProps
 
 type StoreProps = { 
-  posts: Post[], 
-  counter: number, 
-  loggedIn: boolean, 
-  reduxLogin: Function, 
-  reduxFetchPosts: Function, 
-  reduxLikePost: Function, 
-  reduxDislikePost: Function
+  posts: Post[],
+  loadPosts: Function, 
 };
 
 const initialState = Object.freeze({rows: [] as Post[]});
@@ -28,28 +22,7 @@ class Home extends Component<Props, State> {
   readonly state : State = initialState;
 
   componentDidMount() {
-    // GET list here
-    this.props.reduxFetchPosts();
-    // this.findCoordinates();
-    // setTimeout(() => {
-    //   this.setState({
-    //     rows: [{
-    //         id: '0',
-    //         username: 'noah davidson',
-    //         imageSrc: 'https://via.placeholder.com/256x144',
-    //         liked: true,
-    //       },
-    //       {
-    //         id: '1',
-    //         username: 'chococowmilk',
-    //         imageSrc: 'https://via.placeholder.com/256x144',
-    //         liked: false,
-    //       }]
-    //   });
-
-    //   this.props.reduxFetchPosts();
-    //   // console.log('POST PROPS', this.props.posts)
-    // }, 2000)
+    this.props.loadPosts(true);
   }
 
   // findCoordinates = () => {
@@ -60,51 +33,36 @@ class Home extends Component<Props, State> {
 	// 		error => Alert.alert(error.message),
 	// 		{ enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
 	// 	);
-	// };
+  // };
+  
+  renderSpinner = () => {
+    return <ActivityIndicator size="large" />
+  }
 
   renderPost = ({ item } : {item: Post}) => {
-    return (
-      <UserPost post={item} />
-    )
+    return <UserPost post={item} />
+  }
+
+  renderList() {
+    return <FlatList
+        style={styles.container}
+        data={this.props.posts.data}
+        renderItem={this.renderPost}
+      />
   }
 
   render() {
     return (
       <>
-      <View >
-          <Text >Logged In: </Text>
-          <Text >{`${this.props.loggedIn}`}</Text>
-
-          <Button
-            title="Login"
-            onPress={this.props.loggedIn === false ? () => this.props.reduxLogin(true) : () => this.props.reduxLogin(false)}
-          />
-        </View>
-
-        <Text >Counter</Text>
-
-        <View >
-          <TouchableOpacity onPress={() => this.props.reduxLikePost()}>
-            <Text>+</Text>
-          </TouchableOpacity>
-
-          <Text>{this.props.counter}</Text>
-
-          <TouchableOpacity onPress={() => this.props.reduxDislikePost()}>
-            <Text >-</Text>
-          </TouchableOpacity>
-        </View>
-      <FlatList
-        style={styles.container}
-        data={this.props.posts}
-        renderItem={this.renderPost}
-      />
+        {
+          this.props.posts.isFetching ? 
+          this.renderSpinner() : 
+          this.renderList()
+        }
       </>
     );
   }
 }
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -118,19 +76,19 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    posts: state.homeReducer.posts,
-    counter: state.homeReducer.counter,
-    loggedIn: state.authReducer.loggedIn,
+    posts: state.home.posts,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    reduxFetchPosts: () => dispatch(fetchPosts()),
-    reduxLikePost: (id) => dispatch(likePost(id)),
-    reduxDislikePost: (id) => dispatch(dislikePost(id)),
-    reduxLogin: (trueFalse) => dispatch(login(trueFalse)),
-  };
-};
-// Exports
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     reduxFetchPosts: () => dispatch(loadPosts()),
+//     // reduxLikePost: (id) => dispatch(likePost(id)),
+//     // reduxDislikePost: (id) => dispatch(dislikePost(id)),
+//     // reduxLogin: (trueFalse) => dispatch(login(trueFalse)),
+//   };
+// };
+
+export default connect(mapStateToProps, {
+  loadPosts: homeActions.loadPosts,
+})(Home);

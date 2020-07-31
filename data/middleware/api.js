@@ -1,5 +1,4 @@
 import axios from "axios";
-import { actionTypes } from "../actions";
 
 export const CALL_API = 'Call API';
 
@@ -39,40 +38,34 @@ const callApi = async (config) => {
  * API Middlware
  */
 export default ({ getState }) => (next) => async (action) => {
-    const callAPI = action[CALL_API];
-    console.log("callAPI", callAPI)
-    if (typeof callAPI === 'undefined') {
-      return next(action)
+    const {types, [CALL_API] : apiConfig} = action;
+    if (typeof apiConfig === 'undefined') {
+      return next(action);
     }
-
-    const {type, name} = action;
-    console.log("type", type)
-  
-    const {config} = callAPI;
 
   // TODO validate client requests with logged in session from state
   // getState();
 
-  const [ rootType ] = type.split('.');
-  const baseActionType = actionTypes[rootType];
+  const actionWith = data => {
+    const finalAction = Object.assign({}, action, data);
+    delete finalAction[CALL_API];
+    return finalAction;
+  }
 
-  next(action);
+  const [ requestType, successType, failureType ] = types
+  next(actionWith({ type: requestType }))
   
-  return callApi(config)
+  return callApi(apiConfig)
     .then((response) => {
-        console.log("baseActionType", baseActionType.SUCCESS)
-        console.log("RESPONSE", response)
-        return next({
-            name,
-            type: baseActionType.SUCCESS,
+        return next(actionWith({
+            type: successType,
             payload: response.data,
-        });
+        }));
     })
     .catch((error) => {
-        return next({
-            name,
-            type: baseActionType.ERROR,
+        return next(actionWith({
+            type: failureType,
             payload: error.data,
-        });
+        }));
     });
 };

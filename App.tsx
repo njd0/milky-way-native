@@ -8,7 +8,7 @@ import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 
-import { store, persistor } from './redux/store/store';
+import { store, persistor } from './data/store/store';
 
 export default function App() {
   const isLoadingComplete = useCachedResources();

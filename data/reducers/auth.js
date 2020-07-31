@@ -3,7 +3,7 @@ const initialState = {
     loggedIn: false,
   };
   // Reducers (Modifies The State And Returns A New State)
-  const authReducer = (state = initialState, action) => {
+  const auth = (state = initialState, action) => {
     switch (action.type) {
       // Login
       case 'LOGIN': {
@@ -21,4 +21,4 @@ const initialState = {
     }
   };
   // Exports
-  export default authReducer;
+  export default auth;

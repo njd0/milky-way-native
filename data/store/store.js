@@ -3,7 +3,7 @@ import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 import { persistStore, persistReducer } from 'redux-persist';
-import rootReducer from '../reducers/index';
+import rootReducer from '../reducers';
 import apiMiddleware from "../middleware/api";
 
 // Middleware: Redux Persist Config
@@ -14,11 +14,11 @@ const persistConfig = {
   storage: AsyncStorage,
   // Whitelist (Save Specific Reducers)
   whitelist: [
-    'authReducer',
+    'auth',
   ],
   // Blacklist (Don't Save Specific Reducers)
   blacklist: [
-    'homeReducer',
+    'home',
   ],
 };
 // Middleware: Redux Persist Persisted Reducer
